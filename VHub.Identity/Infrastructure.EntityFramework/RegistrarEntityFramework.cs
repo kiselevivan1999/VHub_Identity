@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Infrastructure.EntityFramework;
 
-public static class Registrar
+public static class RegistrarEntityFramework
 {
     public static void InitializeDb(this IServiceCollection services, IConfiguration configuration)
     {
