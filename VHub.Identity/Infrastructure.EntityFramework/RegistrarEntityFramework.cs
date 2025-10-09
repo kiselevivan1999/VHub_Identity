@@ -15,26 +15,7 @@ public static class RegistrarEntityFramework
         {
             var dbConnectionString = GetDbConnectionString(configuration);
             services.AddDbContext<AuthDbContext>(conf =>
-                conf.UseNpgsql(dbConnectionString!))
-                .AddIdentity<User, Role>(conf =>
-                {
-                    //Настройки пароля
-                    conf.Password.RequiredLength = 8;
-                    conf.Password.RequireNonAlphanumeric = false;
-                    conf.Password.RequireUppercase = false;
-                    conf.Password.RequireLowercase = false;
-                    conf.Password.RequireDigit = false;
-                    conf.Password.RequiredUniqueChars = 1;
-
-                    //Настройки Locout
-                    conf.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-                    conf.Lockout.MaxFailedAccessAttempts = 5;
-                    conf.Lockout.AllowedForNewUsers = true;
-
-                    conf.User.RequireUniqueEmail = true;
-                })
-                .AddDefaultTokenProviders()
-                .AddEntityFrameworkStores<AuthDbContext>();
+                conf.UseNpgsql(dbConnectionString!));
         }
         catch
         {

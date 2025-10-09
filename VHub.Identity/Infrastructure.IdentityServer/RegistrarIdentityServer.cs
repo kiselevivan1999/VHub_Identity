@@ -11,6 +11,22 @@ public static class RegistrarIdentityServer
 {
     public static void InitializeIdentityServer(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddIdentity<User, Role>(conf =>
+        {
+            //Настройки пароля
+            conf.Password.RequiredLength = 8;
+            conf.Password.RequireNonAlphanumeric = false;
+            conf.Password.RequireUppercase = true;
+            conf.Password.RequireLowercase = true;
+            conf.Password.RequireDigit = true;
+            conf.Password.RequiredUniqueChars = 2;
+
+            conf.User.RequireUniqueEmail = true;
+        })
+        .AddDefaultTokenProviders()
+        .AddErrorDescriber<IdentityServerErrorDescriber>()
+        .AddEntityFrameworkStores<AuthDbContext>();
+
         services.AddIdentityServer(conf =>
         {
             conf.Events.RaiseErrorEvents = true;
@@ -23,26 +39,7 @@ public static class RegistrarIdentityServer
             .AddInMemoryApiScopes(IdentityServerConfig.GetApiScopes())
             .AddInMemoryIdentityResources(IdentityServerConfig.GetIdentityResources())
             .AddInMemoryClients(IdentityServerConfig.GetClients())
+            .AddProfileService<IdentityServerProfileService>()
             .AddDeveloperSigningCredential();
-
-        services.AddIdentity<User, Role>(conf =>
-        {
-            //Настройки пароля
-            conf.Password.RequiredLength = 8;
-            conf.Password.RequireNonAlphanumeric = false;
-            conf.Password.RequireUppercase = false;
-            conf.Password.RequireLowercase = false;
-            conf.Password.RequireDigit = false;
-            conf.Password.RequiredUniqueChars = 1;
-
-            //Настройки Locout
-            conf.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-            conf.Lockout.MaxFailedAccessAttempts = 5;
-            conf.Lockout.AllowedForNewUsers = true;
-
-            conf.User.RequireUniqueEmail = true;
-        })
-        .AddDefaultTokenProviders()
-        .AddEntityFrameworkStores<AuthDbContext>();
     }
 }

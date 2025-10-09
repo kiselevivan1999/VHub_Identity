@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Configuration;
 using WebApi;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,24 +10,27 @@ var config = builder.Configuration;
 services.AddInfrastructure(config);
 services.AddApplicationServices();
 services.AddControllers();
-services.AddEndpointsApiExplorer();
-services.AddSwaggerGen();
+
+services.AddCors(corOpt => { corOpt.AddDefaultPolicy(conf => conf.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin()); });
+services.AddAuthenticationAndAuthorizationService(config);
+
+services.AddSwaggerService(config);
 
 #endregion
 
 #region app
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
+
 
 app.UseHttpsRedirection();
+app.UseCors();
 
 app.UseAuthorization();
+app.UseAuthentication();
+app.UseIdentityServer();
 
 app.MapControllers();
 
