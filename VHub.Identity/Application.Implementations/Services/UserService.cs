@@ -86,7 +86,7 @@ public class UserService : IUserService
             await _userManager.CreateAsync(applicationUser, registrationUserDto.Password);
 
         if (!registrationUser.Succeeded)
-            throw new BadRequestException(registrationUser.Errors.First().Description);
+            throw new BadRequestException(string.Join(" ", registrationUser.Errors.Select(x => x.Description)));
 
         return applicationUser.Id;
     }
