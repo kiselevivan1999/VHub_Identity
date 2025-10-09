@@ -1,9 +1,8 @@
-﻿
-
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace Infrastructure.IdentityServer.Configurations;
 
+//Русифицируем описание ошибок
 public class IdentityServerErrorDescriber : IdentityErrorDescriber
 {
     public override IdentityError PasswordRequiresDigit()
@@ -20,10 +19,27 @@ public class IdentityServerErrorDescriber : IdentityErrorDescriber
         return new IdentityError
         {
             Code = nameof(PasswordRequiresLower),
-            Description = "Пароль должен содержать латинские буквы маленького регистра.",
+            Description = "Пароль должен содержать латинские буквы нижнего регистра.",
         };
     }
 
+    public override IdentityError PasswordRequiresUpper()
+    {
+        return new IdentityError
+        {
+            Code = nameof(PasswordRequiresUpper),
+            Description = "Пароль должен содержать латинские буквы верхнего регистра.",
+        };
+    }
+
+    public override IdentityError PasswordRequiresUniqueChars(int uniqueChars)
+    {
+        return new IdentityError
+        {
+            Code = nameof(PasswordRequiresUniqueChars),
+            Description = $"Пароль должен использовать как минимум {uniqueChars} различных символов.",
+        };
+    }
 
     public override IdentityError PasswordRequiresNonAlphanumeric()
     {
@@ -31,7 +47,7 @@ public class IdentityServerErrorDescriber : IdentityErrorDescriber
         {
             Code = nameof(PasswordRequiresNonAlphanumeric),
             Description =
-                "Пароль должен состоять минимум из 8 символов, содержать цифры, строчные и заглавные буквы от A-Z.",
+                "Пароль должен содержать хотя бы один спецсимвол.",
         };
 
     }
