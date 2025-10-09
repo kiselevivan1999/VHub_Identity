@@ -1,5 +1,4 @@
-﻿using Domain.Entities;
-using Infrastructure.EntityFramework.Contexts;
+﻿using Infrastructure.EntityFramework.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

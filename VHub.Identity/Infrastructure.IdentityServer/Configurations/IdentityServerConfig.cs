@@ -16,7 +16,7 @@ internal static class IdentityServerConfig
         {
             new ApiScope()
             {
-                Name = "cit_authorization",
+                Name = "vhub_authorization",
                 Description = "Доступ к сервисам"
             }
         };
@@ -25,22 +25,24 @@ internal static class IdentityServerConfig
     public static IEnumerable<ApiResource> GetApiResources()
         => new List<ApiResource>()
         {
-            new ApiResource("cit_all_access", "Доступ ко всем сервисам")
+            new ApiResource("vhub_all_access", "Доступ ко всем сервисам")
             {
-                Scopes = {"cit_all_access"}
+                Scopes = { "vhub_authorization" }
             }
         };
 
     public static IEnumerable<Client> GetClients()
-        => new List<Client>()
+    { 
+        var result = new List<Client>()
         {
             new Client()
             {
-                ClientId = "cit_api_client_jwt",
+                ClientId = "vhub_api_client_jwt",
                 RequireClientSecret = false,
                 AllowedGrantTypes = GrantTypes.ResourceOwnerPasswordAndClientCredentials,
-                AllowedScopes = GetApiResources()
-                    .First(f=>f.Name == "cit_all_access").Scopes,
+                AllowedScopes = { "vhub_authorization" },
+                //AllowedScopes = GetApiResources()
+                //    .First(f=>f.Name == "vhub_all_access").Scopes,
                 UpdateAccessTokenClaimsOnRefresh = true,
                 AllowOfflineAccess = true,
                 RefreshTokenUsage = TokenUsage.OneTimeOnly,
@@ -49,4 +51,9 @@ internal static class IdentityServerConfig
                 AccessTokenLifetime = (int) TimeSpan.FromHours(10).TotalSeconds,
             }
         };
+
+        return result;
+
+    }
+   
 }

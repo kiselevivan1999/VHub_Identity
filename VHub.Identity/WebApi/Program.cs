@@ -29,10 +29,12 @@ app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseCors();
+app.UseRouting();
 
-app.UseAuthorization();
-app.UseAuthentication();
 app.UseIdentityServer();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 
