@@ -39,7 +39,7 @@ internal static class IdentityServerConfig
             {
                 ClientId = "vhub_api_client_jwt",
                 RequireClientSecret = false,
-                AllowedGrantTypes = GrantTypes.ResourceOwnerPasswordAndClientCredentials,
+                AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
                 AllowedScopes = { "vhub_authorization" },
                 //AllowedScopes = GetApiResources()
                 //    .First(f=>f.Name == "vhub_all_access").Scopes,

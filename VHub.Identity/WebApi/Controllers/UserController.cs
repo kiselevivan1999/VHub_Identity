@@ -23,19 +23,6 @@ public class UserController : ControllerBase
         _clientStore = clientStore;
     }
 
-    [HttpGet("[action]")]
-    public async Task<ActionResult> GetClients()
-    {
-        // Получаем внутренний словарь _clients через рефлексию
-        var innerClientsField = typeof(InMemoryClientStore).GetField("_clients", BindingFlags.NonPublic | BindingFlags.Instance);
-        var clientsDictionary = (IDictionary<string, Client>)innerClientsField.GetValue(_clientStore);
-        // Проверяем, содержит ли словарь ваш ClientId
-        var containsKey = clientsDictionary.ContainsKey("vhub_api_client_jwt"); // или скопированное значение
-        var clientFromDictionary = clientsDictionary["vhub_api_client_jwt"]; // или скопированное значение
-                                                                             // А теперь вызов FindClientByIdAsync
-        var clientFromMethod = await _clientStore.FindClientByIdAsync("vhub_api_client_jwt"); // или скопированное значение
-        return Ok();
-    }
 
     [HttpGet("[action]")]
     public async Task<ActionResult<IEnumerable<GetAllUsersResponse>>> GetAll(CancellationToken ct) 
