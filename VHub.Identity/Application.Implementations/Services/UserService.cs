@@ -1,5 +1,4 @@
 ﻿using Application.Abstracts.Services;
-using Application.Contracts.Roles;
 using Application.Contracts.Users;
 using Domain.Entities;
 using Domain.Exceptions;
@@ -19,6 +18,21 @@ public class UserService : IUserService
     {
         _userManager = userManager;
         _roleManager = roleManager;
+    }
+
+    public async Task<UserSmallInfoDto> GetById(Guid userId, CancellationToken ct) 
+    {
+        var applicationUser = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId, ct);
+        if (applicationUser == null)
+            throw new NotFoundException("Пользователь не найден.");
+
+        //TODO: Заменить на mapster + поменять dto
+        return new UserSmallInfoDto()
+        {
+            Id = applicationUser.Id,
+            UserName = applicationUser.UserName,
+            Email = applicationUser.Email
+        };
     }
 
     public async Task ChangeUserRole(ChangeUserRolesDto changeUserRolesDto, CancellationToken ct)
@@ -48,7 +62,8 @@ public class UserService : IUserService
         transactionScope.Complete();
     }
 
-    public async Task<UserSmallInfoDto[]> GetAll(CancellationToken ct)
+    //TODO: принимать фильтр
+    public async Task<UserSmallInfoDto[]> GetByFilter(CancellationToken ct)
     {
         return await _userManager.Users.Select(user => new UserSmallInfoDto()
         {
@@ -58,27 +73,7 @@ public class UserService : IUserService
         }).ToArrayAsync(ct);
     }
 
-    public async Task<RoleDto[]> GetUserRoles(string userId, CancellationToken ct)
-    {
-        User? applicationUser = await _userManager.FindByIdAsync(userId);
-
-        if (applicationUser is null)
-            throw new NotFoundException("Пользователь не найден", userId);
-
-        IList<string> rolesName = await _userManager.GetRolesAsync(applicationUser);
-
-        RoleDto[] roleDtos = _roleManager.Roles.Where(w => rolesName.Contains(w.Name!))
-            .Select(role => new RoleDto()
-            {
-                Id = role.Id,
-                Name = role.Name
-            })
-            .ToArray();
-
-        return roleDtos;
-    }
-
-    public async Task<Guid> Registration(RegistrationUserDto registrationUserDto, CancellationToken ct)
+    public async Task<Guid> Create(RegistrationUserDto registrationUserDto, CancellationToken ct)
     {
         User applicationUser = new User(registrationUserDto.Login, registrationUserDto.Email);
 
