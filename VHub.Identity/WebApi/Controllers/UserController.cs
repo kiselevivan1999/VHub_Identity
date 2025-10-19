@@ -1,6 +1,7 @@
 ﻿using Application.Abstracts.Services;
 using Application.Contracts.Users;
 using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Contracts.Requests.Users;
 using WebApi.Contracts.Responses.Users;
@@ -18,33 +19,37 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("new")]
-    public async Task<ActionResult<Guid>> Registration(RegistrationUserRequest request, CancellationToken ct)
+    public async Task<ActionResult<Guid>> Create(RegistrationUserRequest request, CancellationToken ct)
     {
-        var result = await _userService.Registration(request.Adapt<RegistrationUserDto>(), ct);
+        var result = await _userService.Create(request.Adapt<RegistrationUserDto>(), ct);
         return Ok(result);
     }
 
     [HttpPost("recover-password")]
+    [Authorize]
     public async Task<ActionResult> RecoverPassword()
     {
         throw new NotImplementedException();
     }
 
     [HttpGet("{userId}")]
-    public async Task<ActionResult<IEnumerable<GetAllUsersResponse>>> GetById(Guid userId, CancellationToken ct)
+    [Authorize("Admin")]
+    public async Task<ActionResult<UserSmallInfoDto>> GetById(Guid userId, CancellationToken ct)
     {
         var result = await _userService.GetById(userId, ct);
-        return Ok(result.Adapt<IEnumerable<GetAllUsersResponse>>());
+        return Ok(result.Adapt<UserSmallInfoDto>());
     }
 
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<GetAllUsersResponse>>> GetByFilter(CancellationToken ct) 
+    [HttpPost]
+    [Authorize("Admin")]
+    public async Task<ActionResult<IEnumerable<GetAllUsersResponse>>> GetByFilter(GetUserByFilterRequest request, CancellationToken ct) 
     {
-        var result = await _userService.GetByFilter(ct);
+        var result = await _userService.GetByFilter(request.Adapt<GetUserByFilterDto>(), ct);
         return Ok(result.Adapt<IEnumerable<GetAllUsersResponse>>());
     }
 
     [HttpPut("[action]")]
+    //[Authorize("Admin")]
     public async Task<ActionResult> ChangeUserRole(ChangeUserRoleRequest request, CancellationToken ct)
     {
         await _userService.ChangeUserRole(request.Adapt<ChangeUserRolesDto>(), ct);

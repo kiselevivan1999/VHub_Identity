@@ -2,6 +2,7 @@
 using Application.Contracts.Users;
 using Domain.Entities;
 using Domain.Exceptions;
+using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Transactions;
@@ -26,13 +27,7 @@ public class UserService : IUserService
         if (applicationUser == null)
             throw new NotFoundException("Пользователь не найден.");
 
-        //TODO: Заменить на mapster + поменять dto
-        return new UserSmallInfoDto()
-        {
-            Id = applicationUser.Id,
-            UserName = applicationUser.UserName,
-            Email = applicationUser.Email
-        };
+        return applicationUser.Adapt<UserSmallInfoDto>();
     }
 
     public async Task ChangeUserRole(ChangeUserRolesDto changeUserRolesDto, CancellationToken ct)
@@ -62,10 +57,18 @@ public class UserService : IUserService
         transactionScope.Complete();
     }
 
-    //TODO: принимать фильтр
-    public async Task<UserSmallInfoDto[]> GetByFilter(CancellationToken ct)
+    public async Task<UserSmallInfoDto[]> GetByFilter(GetUserByFilterDto request, CancellationToken ct)
     {
-        return await _userManager.Users.Select(user => new UserSmallInfoDto()
+        var users = _userManager.Users;
+
+        if (string.IsNullOrWhiteSpace(request.UserName) is false)
+            users = users.Where(x => x.UserName.Contains(request.UserName));
+        if (string.IsNullOrWhiteSpace(request.Email) is false)
+            users = users.Where(x => x.Email.Contains(request.Email));
+        if (request.IsConfirmEmail is not null)
+            users = users.Where(x => x.EmailConfirmed == request.IsConfirmEmail);
+
+        return await users.Select(user => new UserSmallInfoDto()
         {
             Id = user.Id,
             UserName = user.UserName,
