@@ -48,7 +48,14 @@ public static class Registrar
                 };
             });
 
-        services.AddAuthorization(conf => { conf.AddPolicy("Admin", policy => policy.RequireClaim(ClaimTypes.Role, "admin")); });
+        services.AddAuthorization(conf => 
+        { 
+            conf.AddPolicy("Admin", policy => 
+            {
+                policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
+                policy.RequireClaim(ClaimTypes.Role, "admin"); 
+            });
+        });
 
         return services;
     }
