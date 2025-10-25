@@ -417,3 +417,4 @@ FodyWeavers.xsd
 *.msm
 *.msp
 /VHub.Identity/WebApi/tempkey.jwk
+/VHub.Identity/WebApi/keys
