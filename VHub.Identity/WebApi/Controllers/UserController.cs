@@ -10,14 +10,8 @@ namespace WebApi.Controllers;
 
 [ApiController]
 [Route("users")]
-public class UserController : ControllerBase
+public class UserController(IUserService _userService) : ControllerBase
 {
-    private readonly IUserService _userService;
-    public UserController(IUserService userService) 
-    {
-        _userService = userService;
-    }
-
     [HttpPost("new")]
     public async Task<ActionResult<Guid>> Create(RegistrationUserRequest request, CancellationToken ct)
     {
@@ -49,7 +43,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPut("[action]")]
-    //[Authorize("Admin")]
+    [Authorize("Admin")]
     public async Task<ActionResult> ChangeUserRole(ChangeUserRoleRequest request, CancellationToken ct)
     {
         await _userService.ChangeUserRole(request.Adapt<ChangeUserRolesDto>(), ct);
