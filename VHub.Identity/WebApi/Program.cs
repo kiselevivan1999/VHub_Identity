@@ -1,5 +1,6 @@
 using WebApi;
 using WebApi.Middlewares;
+using Infrastructure.EntityFramework;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,8 @@ services.AddSwaggerService(config);
 
 #region app
 var app = builder.Build();
+
+await app.Services.MigrateDatabase();
 
 app.UseSwagger();
 app.UseSwaggerUI();
