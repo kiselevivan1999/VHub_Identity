@@ -45,4 +45,16 @@ public static class RegistrarEntityFramework
 
         return connectionStringBuilder.ToString();
     }
+
+    public async static Task MigrateDatabase(this IServiceProvider services)
+    {
+        using var scope = services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
+
+        if (context == null)
+            throw new Exception("Контекст базы данных не инициализирован");
+
+        //Накатываем миграции
+        await context.Database.MigrateAsync();
+    }
 }
