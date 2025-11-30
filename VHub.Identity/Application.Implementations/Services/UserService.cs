@@ -15,13 +15,13 @@ public class UserService : IUserService
     private readonly RoleManager<Role> _roleManager;
 
     public UserService(UserManager<User> userManager,
-        RoleManager<Role> roleManager) 
+        RoleManager<Role> roleManager)
     {
         _userManager = userManager;
         _roleManager = roleManager;
     }
 
-    public async Task<UserSmallInfoDto> GetById(Guid userId, CancellationToken ct) 
+    public async Task<UserSmallInfoDto> GetById(Guid userId, CancellationToken ct)
     {
         var applicationUser = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId, ct);
         if (applicationUser == null)
@@ -74,6 +74,18 @@ public class UserService : IUserService
             UserName = user.UserName,
             Email = user.Email
         }).ToArrayAsync(ct);
+    }
+    public async Task<UserSmallInfoDto[]> GetByUserIds(Guid[] userIds, CancellationToken ct)
+    {
+        return await _userManager.Users
+            .Where(user => userIds.Contains(user.Id))
+            .Select(user => new UserSmallInfoDto()
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email
+            })
+            .ToArrayAsync(ct);
     }
 
     public async Task<Guid> Create(RegistrationUserDto registrationUserDto, CancellationToken ct)

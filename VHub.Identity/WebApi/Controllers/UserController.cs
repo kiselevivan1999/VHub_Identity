@@ -3,6 +3,7 @@ using Application.Contracts.Users;
 using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WebApi.Contracts;
 using WebApi.Contracts.Requests.Users;
 using WebApi.Contracts.Responses.Users;
 
@@ -10,7 +11,7 @@ namespace WebApi.Controllers;
 
 [ApiController]
 [Route("users")]
-public class UserController : ControllerBase
+public class UserController : ControllerBase, IUserController
 {
     private readonly IUserService _userService;
     public UserController(IUserService userService) 
@@ -34,11 +35,16 @@ public class UserController : ControllerBase
 
     [HttpGet("{userId}")]
     [Authorize("Admin")]
-    public async Task<ActionResult<UserSmallInfoDto>> GetById(Guid userId, CancellationToken ct)
+    public async Task<UserSmallInfoResponse> GetById([FromRoute] Guid userId, CancellationToken ct)
     {
         var result = await _userService.GetById(userId, ct);
-        return Ok(result.Adapt<UserSmallInfoDto>());
+        return result.Adapt<UserSmallInfoResponse>();
     }
+
+    [HttpPost("get-by-user-ids")]
+    [Authorize]
+    public async Task<UserSmallInfoResponse[]> GetByUserIds([FromBody] Guid[] userIds, CancellationToken ct) =>
+        (await _userService.GetByUserIds(userIds, ct)).Adapt<UserSmallInfoResponse[]>();
 
     [HttpPost]
     [Authorize("Admin")]

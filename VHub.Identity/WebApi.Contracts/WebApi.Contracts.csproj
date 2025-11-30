@@ -6,4 +6,23 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>VHub.Identity.Api.Contracts</PackageId>
+    <PackageVersion>1.1.0</PackageVersion>
+    <Authors>DevBeavers</Authors>
+    <Description>Публичные API контракты сервиса авторизации.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/kiselevivan1999/VHub_Identity/tree/main/VHub.Identity/WebApi.Contracts</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/kiselevivan1999/VHub_Identity</RepositoryUrl>
+    <PackageTags>http;auth;identity;users;api;contracts;</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="RestEase" Version="1.6.4" />
+  </ItemGroup>
+
 </Project>
