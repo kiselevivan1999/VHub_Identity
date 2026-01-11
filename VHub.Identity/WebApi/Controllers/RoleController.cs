@@ -7,7 +7,7 @@ using WebApi.Contracts.Responses.Roles;
 namespace WebApi.Controllers;
 
 [ApiController]
-[Route("roles")]
+[Route("auth/roles")]
 [Authorize("Admin")]
 public class RoleController(IRoleService _roleService) : ControllerBase
 {

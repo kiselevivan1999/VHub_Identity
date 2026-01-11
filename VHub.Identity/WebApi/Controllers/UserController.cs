@@ -10,7 +10,7 @@ using WebApi.Contracts.Responses.Users;
 namespace WebApi.Controllers;
 
 [ApiController]
-[Route("users")]
+[Route("auth/users")]
 public class UserController : ControllerBase, IUserController
 {
     private readonly IUserService _userService;
@@ -54,8 +54,8 @@ public class UserController : ControllerBase, IUserController
         return Ok(result.Adapt<IEnumerable<GetAllUsersResponse>>());
     }
 
-    [HttpPut("[action]")]
-    //[Authorize("Admin")]
+    [HttpPut("change-role")]
+    [Authorize("Admin")]
     public async Task<ActionResult> ChangeUserRole(ChangeUserRoleRequest request, CancellationToken ct)
     {
         await _userService.ChangeUserRole(request.Adapt<ChangeUserRolesDto>(), ct);
